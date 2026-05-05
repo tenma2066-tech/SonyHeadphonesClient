@@ -535,3 +535,6 @@ cmake-build*/
 # Visual Studio Generator files
 *.sln
 *.vcxproj
+
+# Claude Code session data
+.claude/
