@@ -65,6 +65,12 @@ add_subdirectory(Platform)
 target_link_libraries(ImGuiSDL3 PUBLIC SDL3::SDL3-static)
 target_link_libraries(SonyHeadphonesClient PRIVATE mdr ImGuiSDL3 Client_Platform)
 
+if (MINGW)
+    # Static-link the MinGW runtime so the exe runs without
+    # libgcc_s_seh-1.dll / libstdc++-6.dll / libwinpthread-1.dll.
+    target_link_options(SonyHeadphonesClient PRIVATE -static)
+endif()
+
 target_compile_definitions(SonyHeadphonesClient PRIVATE
     -DCLIENT_VERSION="${CLIENT_VERSION}"
     -DMDR_GIT_COMMIT_HASH="${MDR_GIT_COMMIT_HASH}"

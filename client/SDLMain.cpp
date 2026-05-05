@@ -90,13 +90,12 @@ int main(int, char**)
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
-    // Load persisted settings (locale) from per-user pref dir.
-    if (char* prefPath = SDL_GetPrefPath("SonyHeadphonesClient", "client"))
+    // Load persisted settings (locale) from a portable settings.ini next to the exe.
+    if (const char* basePath = SDL_GetBasePath())
     {
-        std::string settingsFile = std::string(prefPath) + "settings.ini";
+        std::string settingsFile = std::string(basePath) + "settings.ini";
         i18n::SetSettingsPath(settingsFile.c_str());
         i18n::LoadSettings();
-        SDL_free(prefPath);
     }
     // https://github.com/libsdl-org/SDL/blob/main/docs/README-highdpi.md#numeric-example
     // This should only be effective (!=1.0f) on Windows and X11 platforms
