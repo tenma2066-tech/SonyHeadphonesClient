@@ -11,6 +11,7 @@
 #include "Fonts/PlexSansIcon.h"
 #include "Platform/Platform.hpp"
 #include "MaterialYouTheme.hpp"
+#include "i18n/Localization.hpp"
 using namespace mdr;
 
 mdr::MDRHeadphones gDevice;
@@ -20,235 +21,182 @@ String gBugcheckMessage;
 const char* FormatEnum(v2::t1::AudioCodec codec)
 {
     using enum v2::t1::AudioCodec;
+    const char* key = "audio_codec.unknown";
     switch (codec)
     {
-    case UNSETTLED:
-        return "<unsettled>";
-    case SBC:
-        return "SBC";
-    case AAC:
-        return "AAC";
-    case LDAC:
-        return "LDAC";
-    case APT_X:
-        return "aptX";
-    case APT_X_HD:
-        return "aptX HD";
-    case LC3:
-        return "LC3";
+    case UNSETTLED: key = "audio_codec.unsettled"; break;
+    case SBC:       key = "audio_codec.sbc"; break;
+    case AAC:       key = "audio_codec.aac"; break;
+    case LDAC:      key = "audio_codec.ldac"; break;
+    case APT_X:     key = "audio_codec.aptx"; break;
+    case APT_X_HD:  key = "audio_codec.aptx_hd"; break;
+    case LC3:       key = "audio_codec.lc3"; break;
     default:
-    case OTHER:
-        return "Unknown";
+    case OTHER:     key = "audio_codec.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::UpscalingType codec)
 {
     using enum v2::t1::UpscalingType;
+    const char* key = "dsee.unknown";
     switch (codec)
     {
-    case DSEE_HX:
-        return "DSEE HX";
-    case DSEE:
-        return "DSEE";
-    case DSEE_HX_AI:
-        return "DSEE HX AI";
-    case DSEE_ULTIMATE:
-        return "DSEE ULTIMATE";
-    default:
-        return "DSEE Unknown";
+    case DSEE_HX:       key = "dsee.hx"; break;
+    case DSEE:          key = "dsee.dsee"; break;
+    case DSEE_HX_AI:    key = "dsee.hx_ai"; break;
+    case DSEE_ULTIMATE: key = "dsee.ultimate"; break;
+    default:            key = "dsee.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::BatteryChargingStatus status)
 {
     using enum v2::t1::BatteryChargingStatus;
+    const char* key = "battery.unknown";
     switch (status)
     {
-    case CHARGING:
-        return "Charging";
-    case CHARGED:
-        return "Charged";
-    case NOT_CHARGING:
-        return ""; // Hidden
+    case CHARGING:     key = "battery.charging"; break;
+    case CHARGED:      key = "battery.charged"; break;
+    case NOT_CHARGING: key = "battery.not_charging"; break; // Hidden (empty string)
     default:
-    case UNKNOWN:
-        return "Unknown";
+    case UNKNOWN:      key = "battery.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::NoiseAdaptiveSensitivity status)
 {
     using enum v2::t1::NoiseAdaptiveSensitivity;
+    const char* key = "nc_sens.unknown";
     switch (status)
     {
-    case STANDARD:
-        return "Standard";
-    case HIGH:
-        return "High";
-    case LOW:
-        return "Low";
-    default:
-        return "Unknown";
+    case STANDARD: key = "nc_sens.standard"; break;
+    case HIGH:     key = "nc_sens.high"; break;
+    case LOW:      key = "nc_sens.low"; break;
+    default:       key = "nc_sens.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::DetectSensitivity status)
 {
     using enum v2::t1::DetectSensitivity;
+    const char* key = "detect_sens.unknown";
     switch (status)
     {
-    case AUTO:
-        return "Auto";
-    case HIGH:
-        return "High";
-    case LOW:
-        return "Low";
-    default:
-        return "Unknown";
+    case AUTO: key = "detect_sens.auto"; break;
+    case HIGH: key = "detect_sens.high"; break;
+    case LOW:  key = "detect_sens.low"; break;
+    default:   key = "detect_sens.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::ModeOutTime status)
 {
     using enum v2::t1::ModeOutTime;
+    const char* key = "mode_out_time.unknown";
     switch (status)
     {
-    case FAST:
-        return "Short (~5s)";
-    case MID:
-        return "Standard (~15s)";
-    case SLOW:
-        return "Long (~30s)";
-    case NONE:
-        return "Don't end automatically";
-    default:
-        return "Unknown";
+    case FAST: key = "mode_out_time.fast"; break;
+    case MID:  key = "mode_out_time.mid"; break;
+    case SLOW: key = "mode_out_time.slow"; break;
+    case NONE: key = "mode_out_time.none"; break;
+    default:   key = "mode_out_time.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::EqPresetId id)
 {
     using enum v2::t1::EqPresetId;
+    const char* key = "eq.unknown";
     switch (id)
     {
-    case OFF:
-        return "Off";
-    case ROCK:
-        return "Rock";
-    case POP:
-        return "Pop";
-    case JAZZ:
-        return "Jazz";
-    case DANCE:
-        return "Dance";
-    case EDM:
-        return "EDM";
-    case R_AND_B_HIP_HOP:
-        return "R&B/Hip-Hop";
-    case ACOUSTIC:
-        return "Acoustic";
-    case BRIGHT:
-        return "Bright";
-    case EXCITED:
-        return "Excited";
-    case MELLOW:
-        return "Mellow";
-    case RELAXED:
-        return "Relaxed";
-    case VOCAL:
-        return "Vocal";
-    case TREBLE:
-        return "Treble";
-    case BASS:
-        return "Bass";
-    case SPEECH:
-        return "Speech";
-    case CUSTOM:
-        return "Custom";
-    case USER_SETTING1:
-        return "User Setting 1";
-    case USER_SETTING2:
-        return "User Setting 2";
-    case USER_SETTING3:
-        return "User Setting 3";
-    case USER_SETTING4:
-        return "User Setting 4";
-    case USER_SETTING5:
-        return "User Setting 5";
-    default:
-        return "Unknown";
+    case OFF:             key = "eq.off"; break;
+    case ROCK:            key = "eq.rock"; break;
+    case POP:             key = "eq.pop"; break;
+    case JAZZ:            key = "eq.jazz"; break;
+    case DANCE:           key = "eq.dance"; break;
+    case EDM:             key = "eq.edm"; break;
+    case R_AND_B_HIP_HOP: key = "eq.rb_hiphop"; break;
+    case ACOUSTIC:        key = "eq.acoustic"; break;
+    case BRIGHT:          key = "eq.bright"; break;
+    case EXCITED:         key = "eq.excited"; break;
+    case MELLOW:          key = "eq.mellow"; break;
+    case RELAXED:         key = "eq.relaxed"; break;
+    case VOCAL:           key = "eq.vocal"; break;
+    case TREBLE:          key = "eq.treble"; break;
+    case BASS:            key = "eq.bass"; break;
+    case SPEECH:          key = "eq.speech"; break;
+    case CUSTOM:          key = "eq.custom"; break;
+    case USER_SETTING1:   key = "eq.user1"; break;
+    case USER_SETTING2:   key = "eq.user2"; break;
+    case USER_SETTING3:   key = "eq.user3"; break;
+    case USER_SETTING4:   key = "eq.user4"; break;
+    case USER_SETTING5:   key = "eq.user5"; break;
+    default:              key = "eq.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::Preset preset)
 {
     using enum v2::t1::Preset;
-
+    const char* key = "preset.unknown";
     switch (preset)
     {
-    case AMBIENT_SOUND_CONTROL:
-        return "Ambient Sound Control";
-    case VOLUME_CONTROL:
-        return "Volume Control";
-    case PLAYBACK_CONTROL:
-        return "Playback Control";
-    case TRACK_CONTROL:
-        return "Track Control";
-    case PLAYBACK_CONTROL_VOICE_ASSISTANT_LIMITATION:
-        return "Playback Control";
-    case VOICE_RECOGNITION:
-        return "Voice Recognition";
-    case GOOGLE_ASSIST:
-        return "Google Assistant";
-    case AMAZON_ALEXA:
-        return "Amazon Alexa";
-    case TENCENT_XIAOWEI:
-        return "Tencent Xiaowei";
-    case AMBIENT_SOUND_CONTROL_QUICK_ACCESS:
-        return "Ambient Sound Control";
-    case QUICK_ACCESS:
-        return "Quick Access";
-    case NO_FUNCTION:
-        return "No Function";
-    default:
-        return "Unknown";
+    case AMBIENT_SOUND_CONTROL:                       key = "preset.ambient_sound_control"; break;
+    case VOLUME_CONTROL:                              key = "preset.volume_control"; break;
+    case PLAYBACK_CONTROL:                            key = "preset.playback_control"; break;
+    case TRACK_CONTROL:                               key = "preset.track_control"; break;
+    case PLAYBACK_CONTROL_VOICE_ASSISTANT_LIMITATION: key = "preset.playback_control"; break;
+    case VOICE_RECOGNITION:                           key = "preset.voice_recognition"; break;
+    case GOOGLE_ASSIST:                               key = "preset.google_assist"; break;
+    case AMAZON_ALEXA:                                key = "preset.amazon_alexa"; break;
+    case TENCENT_XIAOWEI:                             key = "preset.tencent_xiaowei"; break;
+    case AMBIENT_SOUND_CONTROL_QUICK_ACCESS:          key = "preset.ambient_sound_control"; break;
+    case QUICK_ACCESS:                                key = "preset.quick_access"; break;
+    case NO_FUNCTION:                                 key = "preset.no_function"; break;
+    default:                                          key = "preset.unknown"; break;
     }
+    return i18n::tr(key);
 }
 
 const char* FormatEnum(v2::t1::Function function)
 {
     using enum v2::t1::Function;
+    const char* key = "function.unknown";
     switch (function)
     {
-    case NO_FUNCTION:
-        return "No Function";
-    case NC_ASM_OFF:
-        return "NC-ASM-OFF";
-    case NC_ASM:
-        return "NC-ASM";
-    case NC_OFF:
-        return "NC-OFF";
-    case ASM_OFF:
-        return "ASM-OFF";
-    default:
-        return "Unknown";
+    case NO_FUNCTION: key = "function.no_function"; break;
+    case NC_ASM_OFF:  key = "function.nc_asm_off"; break;
+    case NC_ASM:      key = "function.nc_asm"; break;
+    case NC_OFF:      key = "function.nc_off"; break;
+    case ASM_OFF:     key = "function.asm_off"; break;
+    default:          key = "function.unknown"; break;
     }
+    return i18n::tr(key);
 }
+
 const char* FormatEnum(v2::t1::AutoPowerOffElements off)
 {
     using enum v2::t1::AutoPowerOffElements;
+    const char* key = "auto_power_off.unknown";
     switch (off)
     {
-    case POWER_OFF_IN_5_MIN : return "5 minutes of no Bluetooth connection";
-    case POWER_OFF_IN_15_MIN : return "15 minutes of no Bluetooth connection";
-    case POWER_OFF_IN_30_MIN : return "30 minutes of no Bluetooth connection";
-    case POWER_OFF_IN_60_MIN : return "1 hour of no Bluetooth connection";
-    case POWER_OFF_IN_180_MIN : return "3 hours of no Bluetooth connection";
-    case POWER_OFF_DISABLE : return "Do not turn off";
-    default:
-        return "Unknown";
+    case POWER_OFF_IN_5_MIN:   key = "auto_power_off.5min"; break;
+    case POWER_OFF_IN_15_MIN:  key = "auto_power_off.15min"; break;
+    case POWER_OFF_IN_30_MIN:  key = "auto_power_off.30min"; break;
+    case POWER_OFF_IN_60_MIN:  key = "auto_power_off.60min"; break;
+    case POWER_OFF_IN_180_MIN: key = "auto_power_off.180min"; break;
+    case POWER_OFF_DISABLE:    key = "auto_power_off.disable"; break;
+    default:                   key = "auto_power_off.unknown"; break;
     }
+    return i18n::tr(key);
 }
 #pragma endregion
 #pragma region ImGui Extra
@@ -428,16 +376,16 @@ void ImEqualizer(Span<int> bands)
     if (numBands == 5)
         kBands = kBand5, mn = -10, mx = 10;
     if (!kBands)
-        return ImGui::Text("EQ Unavailable (bands=%d)", numBands);
+        return ImGui::Text(i18n::tr("sound.eq_unavailable_fmt"), numBands);
     auto& style = ImGui::GetStyle();
     float padding = style.FramePadding.x;
     auto [offset, region, draw] = ImWindowDrawOffsetRegionList();
     float bandWidth = region.x / numBands - padding;
     float bandHeight = std::max(region.y, 160.0f);
     if (numBands == 5)
-        ImGui::SeparatorText("5-Band EQ");
+        ImGui::SeparatorText(i18n::tr("sound.eq_5band"));
     if (numBands == 10)
-        ImGui::SeparatorText("10-Band EQ");
+        ImGui::SeparatorText(i18n::tr("sound.eq_10band"));
     for (int i = 0; i < numBands; ++i)
     {
         ImGui::BeginGroup();
@@ -518,7 +466,7 @@ void DrawDeviceDiscovery()
         ImGui::PushFont(nullptr, ImGui::GetContentRegionAvail().x * 0.05f);
         ImTextCentered("SonyHeadphonesClient");
         ImGui::PopFont();
-        ImTextCentered(fmt::format("Version: {}, Branch: {}, Commit: {}, On {}", CLIENT_VERSION, MDR_GIT_BRANCH_NAME, MDR_GIT_COMMIT_HASH, MDR_PLATFORM_OS).c_str());
+        ImTextCentered(fmt::format(fmt::runtime(i18n::tr("discovery.version_fmt")), CLIENT_VERSION, MDR_GIT_BRANCH_NAME, MDR_GIT_COMMIT_HASH, MDR_PLATFORM_OS).c_str());
         // Chose, and have the GATT backend active
         static bool usingBLE = false;
         static int connInitResult = MDR_RESULT_INPROGRESS;
@@ -533,14 +481,14 @@ void DrawDeviceDiscovery()
                 ImStylesRAII styles;
                 if (usingBLE)
                     styles.PushCol(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-                if (ImModalButton(PSI_BLUETOOTH " Classic", 0, 2))
+                if (ImModalButton(i18n::trIcon(PSI_BLUETOOTH, "discovery.classic").c_str(), 0, 2))
                     usingBLE = false, needSwitchClientPlatform = true;
             }
             {
                 ImStylesRAII styles;
                 if (!usingBLE)
                     styles.PushCol(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-                if (ImModalButton(PSI_BLUETOOTH_ALT " BLE (GATT)",1, 2))
+                if (ImModalButton(i18n::trIcon(PSI_BLUETOOTH_ALT, "discovery.ble_gatt").c_str(), 1, 2))
                     usingBLE = true, needSwitchClientPlatform = true;
             }
         }
@@ -563,7 +511,7 @@ void DrawDeviceDiscovery()
         }
         auto DrawDeviceList = [&]()
         {
-            ImGui::SeparatorText("Available Devices");
+            ImGui::SeparatorText(i18n::tr("discovery.available_devices"));
             static int deviceIndex = 0;
             Span<MDRDeviceInfo> devices{pDeviceInfo, static_cast<size_t>(nDeviceInfo)};
             if (!devices.empty())
@@ -577,10 +525,10 @@ void DrawDeviceDiscovery()
                 }
             } else
             {
-                ImGui::TextWrapped(PSI_WARNING_SIGN " No devices available. Make sure your Bluetooth radio is turned on, and a compatible device is connected.");
+                ImGui::TextWrapped("%s", i18n::trIcon(PSI_WARNING_SIGN, "discovery.no_devices").c_str());
             }
             ImGui::BeginDisabled(devices.empty());
-            if (ImModalButton(PSI_LINK " Connect", 0, 2))
+            if (ImModalButton(i18n::trIcon(PSI_LINK, "discovery.connect").c_str(), 0, 2))
             {
                 const char* serviceUUID = usingBLE ? MDR_BLE_SERVICE_UUID_TANDEM_OVER_BLE_HPC : MDR_SERVICE_UUID_XM5;
                 int res = mdrConnectionConnect(clientPlatformConnectionGet(), devices[deviceIndex].szDeviceMacAddress, serviceUUID);
@@ -590,16 +538,16 @@ void DrawDeviceDiscovery()
                     connState = CONN_STATE_CONNECTING;
             }
             ImGui::EndDisabled();
-            if (ImModalButton(PSI_REFRESH " Refresh", 1, 2))
+            if (ImModalButton(i18n::trIcon(PSI_REFRESH, "discovery.refresh").c_str(), 1, 2))
                 RefreshDeviceList();
         };
         if (connInitResult != MDR_RESULT_OK && connInitResult != MDR_RESULT_INPROGRESS)
         {
-            ImTextCentered(fmt::format(PSI_EXCLAMATION_SIGN " Failed to initialize connection: {}", mdrResultString(connInitResult)).c_str());
+            ImTextCentered(fmt::format(fmt::runtime(i18n::trIcon(PSI_EXCLAMATION_SIGN, "discovery.init_failed")), mdrResultString(connInitResult)).c_str());
         }
         DrawDeviceList();
-        ImGui::SeparatorText(PSI_INFO_SIGN_ALT " Select BLE (GATT) if your device is connected via LE Audio, and Classic if you don't know what that means or otherwise.");
-        ImTextCentered(PSI_WARNING_SIGN " This product is not affiliated with Sony. Use at your own risk. " PSI_WARNING_SIGN);
+        ImGui::SeparatorText(i18n::trIcon(PSI_INFO_SIGN_ALT, "discovery.bt_select_hint").c_str());
+        ImTextCentered((std::string(PSI_WARNING_SIGN) + i18n::tr("discovery.disclaimer") + PSI_WARNING_SIGN).c_str());
         ImGui::EndPopup();
     } else
         popup = false;
@@ -628,13 +576,13 @@ void DrawDeviceConnecting()
         if (ImGui::BeginPopupModal("Connection", nullptr, kImWindowFlagsTopMost))
         {
             ImGui::NewLine();
-            ImTextCentered("Connecting...");
+            ImTextCentered(i18n::tr("connecting.title"));
             ImGui::Dummy({0, 16.0f});
             ImSpinner(1000.0f, 24.0f, MaterialYouTheme::ArgbToImU32(MaterialYouTheme::FixedSurfaceColors::onSurface), 2.0f, true, false, 2.0f, ImEaseInOutCubic);
             ImGui::NewLine();
             ImTextCentered(mdrConnectionGetLastError(conn));
             ImGui::NewLine();
-            if (ImModalButton(PSI_REMOVE " Cancel"))
+            if (ImModalButton(i18n::trIcon(PSI_REMOVE, "connecting.cancel").c_str()))
             {
                 mdrConnectionDisconnect(conn);
                 connState = CONN_STATE_NO_CONNECTION;
@@ -663,14 +611,14 @@ void DrawDeviceControlsHeader()
         /* Disconnect & Shutdown */
         if (ImGui::BeginMenu(fmt::format( PSI_CHEVRON_DOWN " {}", gDevice.mModelName).c_str()))
         {
-            if (ImGui::MenuItem(PSI_UNLINK " Disconnect"))
+            if (ImGui::MenuItem(i18n::trIcon(PSI_UNLINK, "header.disconnect").c_str()))
             {
                 mdrConnectionDisconnect(conn);
                 connState = CONN_STATE_NO_CONNECTION;
             }
             if (gDevice.mSupport.contains(v2::MessageMdrV2FunctionType_Table1::POWER_OFF))
             {
-                if (ImGui::MenuItem(PSI_OFF " Shutdown"))
+                if (ImGui::MenuItem(i18n::trIcon(PSI_OFF, "header.shutdown").c_str()))
                     gDevice.mShutdown.desired = true;
             }
             ImGui::EndMenu();
@@ -740,7 +688,7 @@ void DrawDeviceControlsHeader()
                     ImGui::TableNextRow();
                     Uint32 single = gDevice.mBatteryL.level;
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("Battery: %.0d%%", single);
+                    ImGui::Text(i18n::tr("header.battery_fmt"), single);
                     ImGui::TableSetColumnIndex(1);
                     ImGui::ProgressBar(single / 100.0f, {-1, 0}, FormatEnum(gDevice.mBatteryL.charging));
                 }
@@ -749,13 +697,13 @@ void DrawDeviceControlsHeader()
                     Uint32 single = gDevice.mBatteryL.level;
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("L: %.0d%%", single);
+                    ImGui::Text(i18n::tr("header.battery_l_fmt"), single);
                     ImGui::TableSetColumnIndex(1);
                     ImGui::ProgressBar(single / 100.0f, {-1, 0}, FormatEnum(gDevice.mBatteryL.charging));
                     single = gDevice.mBatteryR.level;
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("R: %.0d%%", single);
+                    ImGui::Text(i18n::tr("header.battery_r_fmt"), single);
                     ImGui::TableSetColumnIndex(1);
                     ImGui::ProgressBar(single / 100.0f, {-1, 0}, FormatEnum(gDevice.mBatteryR.charging));
                 }
@@ -764,7 +712,7 @@ void DrawDeviceControlsHeader()
                     Uint32 single = gDevice.mBatteryCase.level;
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("Case: %.0d%%", single);
+                    ImGui::Text(i18n::tr("header.battery_case_fmt"), single);
                     ImGui::TableSetColumnIndex(1);
                     ImGui::ProgressBar(single / 100.0f, {-1, 0}, FormatEnum(gDevice.mBatteryCase.charging));
                 }
@@ -774,22 +722,22 @@ void DrawDeviceControlsHeader()
         ImGui::TableSetColumnIndex(1);
         /* Now Playing */
         {
-            ImGui::Text(PSI_VOLUME_UP " Now Playing");
+            ImGui::Text("%s", i18n::trIcon(PSI_VOLUME_UP, "header.now_playing").c_str());
             if (ImGui::BeginTable("##NowPlaying", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerH))
             {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
-                ImGui::Text("Title");
+                ImGui::Text("%s", i18n::tr("header.now_playing_title"));
                 ImGui::TableSetColumnIndex(1);
                 ImGui::Text("%s", gDevice.mPlayTrackTitle.c_str());
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
-                ImGui::Text("Album");
+                ImGui::Text("%s", i18n::tr("header.now_playing_album"));
                 ImGui::TableSetColumnIndex(1);
                 ImGui::Text("%s", gDevice.mPlayTrackAlbum.c_str());
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
-                ImGui::Text("Artist");
+                ImGui::Text("%s", i18n::tr("header.now_playing_artist"));
                 ImGui::TableSetColumnIndex(1);
                 ImGui::Text("%s", gDevice.mPlayTrackArtist.c_str());
                 ImGui::EndTable();
@@ -802,23 +750,23 @@ void DrawDeviceControlsHeader()
 void DrawDeviceControlsPlayback()
 {
     using enum v2::t1::PlaybackControl;
-    ImGui::SeparatorText("Volume");
+    ImGui::SeparatorText(i18n::tr("playback.volume"));
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     ImGui::SliderInt("##Volume", &gDevice.mPlayVolume.desired, 0, 30);
-    ImGui::SeparatorText("Controls");
-    if (ImModalButton(PSI_STEP_BACKWARD " Prev", 0, 3))
+    ImGui::SeparatorText(i18n::tr("playback.controls"));
+    if (ImModalButton(i18n::trIcon(PSI_STEP_BACKWARD, "playback.prev").c_str(), 0, 3))
         gDevice.mPlayControl.desired = TRACK_DOWN;
     if (gDevice.mPlayPause == v2::t1::PlaybackStatus::PLAY)
     {
-        if (ImModalButton(PSI_PAUSE " Pause", 1, 3))
+        if (ImModalButton(i18n::trIcon(PSI_PAUSE, "playback.pause").c_str(), 1, 3))
             gDevice.mPlayControl.desired = PAUSE;
     }
     else
     {
-        if (ImModalButton(PSI_PLAY " Play", 1, 3))
+        if (ImModalButton(i18n::trIcon(PSI_PLAY, "playback.play").c_str(), 1, 3))
             gDevice.mPlayControl.desired = PLAY;
     }
-    if (ImModalButton(PSI_STEP_FORWARD "Next", 2, 3))
+    if (ImModalButton(i18n::trIcon(PSI_STEP_FORWARD, "playback.next").c_str(), 2, 3))
         gDevice.mPlayControl.desired = TRACK_UP;
 }
 
@@ -854,12 +802,12 @@ void DrawDeviceControlsSound()
     /* NC/ASM */
     if (supportASM || supportNC)
     {
-        if (ImGui::TreeNodeEx("Ambient Sound", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::TreeNodeEx(i18n::tr("sound.ambient_sound"), ImGuiTreeNodeFlags_DefaultOpen))
         {
             if (supportNC)
             {
                 if (ImGui::RadioButton(
-                    "Noise Cancelling",
+                    i18n::tr("sound.noise_cancelling"),
                     gDevice.mNcAsmEnabled.current && (!supportASM || gDevice.mNcAsmMode.desired == NC))
                 )
                 {
@@ -871,7 +819,7 @@ void DrawDeviceControlsSound()
             if (supportASM)
             {
                 if (ImGui::RadioButton(
-                    "Ambient Sound",
+                    i18n::tr("sound.ambient_sound"),
                     gDevice.mNcAsmEnabled.current && (!supportNC || gDevice.mNcAsmMode.desired == ASM))
                 )
                 {
@@ -882,42 +830,42 @@ void DrawDeviceControlsSound()
                 }
                 ImGui::SameLine();
             }
-            if (ImGui::RadioButton("Off", !gDevice.mNcAsmEnabled.desired))
+            if (ImGui::RadioButton(i18n::tr("common.off"), !gDevice.mNcAsmEnabled.desired))
                 gDevice.mNcAsmEnabled.desired = false;
-            ImGui::SeparatorText("Ambient Strength");
+            ImGui::SeparatorText(i18n::tr("sound.ambient_strength"));
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::SliderInt("##AmbStrength", &gDevice.mNcAsmAmbientLevel.desired, 1, 20);
             if (supportAutoASM)
             {
-                ImGui::Checkbox("Auto Ambient Sound", &gDevice.mNcAsmAutoAsmEnabled.desired);
+                ImGui::Checkbox(i18n::tr("sound.auto_ambient_sound"), &gDevice.mNcAsmAutoAsmEnabled.desired);
                 ImGui::BeginDisabled(!gDevice.mNcAsmAutoAsmEnabled.desired);
                 using enum v2::t1::NoiseAdaptiveSensitivity;
                 auto& desired = gDevice.mNcAsmNoiseAdaptiveSensitivity.desired;
                 constexpr v2::t1::NoiseAdaptiveSensitivity kSelections[] = {STANDARD, HIGH, LOW};
-                ImComboBoxItems<v2::t1::NoiseAdaptiveSensitivity>("Sensitivity", kSelections, desired);
+                ImComboBoxItems<v2::t1::NoiseAdaptiveSensitivity>(i18n::tr("common.sensitivity"), kSelections, desired);
                 ImGui::EndDisabled();
             }
-            ImGui::Checkbox("Voice Passthrough", &gDevice.mNcAsmFocusOnVoice.desired);
+            ImGui::Checkbox(i18n::tr("sound.voice_passthrough"), &gDevice.mNcAsmFocusOnVoice.desired);
             ImGui::TreePop();
         }
     }
     /* STC */
     if (kSupports(F1::SMART_TALKING_MODE_TYPE2))
     {
-        if (ImGui::TreeNodeEx("Speak To Chat", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::TreeNodeEx(i18n::tr("sound.speak_to_chat"), ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::Checkbox("Enabled", &gDevice.mSpeakToChatEnabled.desired);
+            ImGui::Checkbox(i18n::tr("common.enabled"), &gDevice.mSpeakToChatEnabled.desired);
             ImGui::BeginDisabled(!gDevice.mSpeakToChatEnabled.desired);
             {
                 using enum v2::t1::DetectSensitivity;
                 constexpr v2::t1::DetectSensitivity kSelections[] = {AUTO, HIGH, LOW};
-                ImComboBoxItems<v2::t1::DetectSensitivity>("Sensitivity", kSelections,
+                ImComboBoxItems<v2::t1::DetectSensitivity>(i18n::tr("common.sensitivity"), kSelections,
                                                            gDevice.mSpeakToChatDetectSensitivity.desired);
             }
             {
                 using enum v2::t1::ModeOutTime;
                 constexpr v2::t1::ModeOutTime kSelections[] = {FAST, MID, SLOW, NONE};
-                ImComboBoxItems<v2::t1::ModeOutTime>("Mode Duration", kSelections,
+                ImComboBoxItems<v2::t1::ModeOutTime>(i18n::tr("sound.mode_duration"), kSelections,
                                                      gDevice.mSpeakToModeOutTime.desired);
             }
             ImGui::EndDisabled();
@@ -927,7 +875,7 @@ void DrawDeviceControlsSound()
     /* Listening Mode */
     if (kSupports(F1::LISTENING_OPTION))
     {
-        if (ImGui::TreeNodeEx("Listening Mode", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::TreeNodeEx(i18n::tr("sound.listening_mode"), ImGuiTreeNodeFlags_DefaultOpen))
         {
             // Derive effective mode from current state
             bool bgmActive    = gDevice.mBGMModeEnabled.current;
@@ -937,9 +885,9 @@ void DrawDeviceControlsSound()
             int effectiveMode = bgmActive ? 1 : (cinemaActive ? 2 : 0);
 
             bool radioChanged = false;
-            if (ImGui::RadioButton("Standard", effectiveMode == 0))
+            if (ImGui::RadioButton(i18n::tr("nc_sens.standard"), effectiveMode == 0))
                 radioChanged = true, effectiveMode = 0;
-            if (ImGui::RadioButton("BGM", effectiveMode == 1))
+            if (ImGui::RadioButton(i18n::tr("sound.bgm"), effectiveMode == 1))
                 radioChanged = true, effectiveMode = 1;
 
             ImGui::Indent();
@@ -947,20 +895,20 @@ void DrawDeviceControlsSound()
             // Distance combo box
             using namespace v2::t1;
             static const std::pair<RoomSize, const char*> kBGMDistanceModes[] = {
-                { RoomSize::SMALL,  "My Room"     },
-                { RoomSize::MIDDLE, "Living Room" },
-                { RoomSize::LARGE,  "Cafe"        },
+                { RoomSize::SMALL,  "sound.my_room"     },
+                { RoomSize::MIDDLE, "sound.living_room" },
+                { RoomSize::LARGE,  "sound.cafe"        },
             };
-            const char* currentDistStr = "Unknown";
+            const char* currentDistKey = "common.unknown_brackets";
             for (auto const& [k, v] : kBGMDistanceModes)
                 if (k == gDevice.mBGMModeRoomSize.current)
-                    currentDistStr = v;
-            if (ImGui::BeginCombo("Distance", currentDistStr))
+                    currentDistKey = v;
+            if (ImGui::BeginCombo(i18n::tr("sound.distance"), i18n::tr(currentDistKey)))
             {
                 for (auto const& [k, v] : kBGMDistanceModes)
                 {
                     bool is_selected = k == gDevice.mBGMModeRoomSize.desired;
-                    if (ImGui::Selectable(v, is_selected))
+                    if (ImGui::Selectable(i18n::tr(v), is_selected))
                         gDevice.mBGMModeRoomSize.desired = k;
                     if (is_selected)
                         ImGui::SetItemDefaultFocus();
@@ -970,7 +918,7 @@ void DrawDeviceControlsSound()
             ImGui::EndDisabled();
             ImGui::Unindent();
 
-            if (ImGui::RadioButton("Cinema", effectiveMode == 2))
+            if (ImGui::RadioButton(i18n::tr("sound.cinema"), effectiveMode == 2))
                 radioChanged = true, effectiveMode = 2;
 
             if (radioChanged)
@@ -983,7 +931,7 @@ void DrawDeviceControlsSound()
         }
     }
     /* EQ & DSEE */
-    if (ImGui::TreeNodeEx("Equalizer & DSEE", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx(i18n::tr("sound.eq_dsee"), ImGuiTreeNodeFlags_DefaultOpen))
     {
         using enum v2::t1::EqPresetId;
         constexpr v2::t1::EqPresetId kSelections[] = {
@@ -991,19 +939,19 @@ void DrawDeviceControlsSound()
             MELLOW, RELAXED, VOCAL, TREBLE, BASS, SPEECH,
             CUSTOM, USER_SETTING1, USER_SETTING2, USER_SETTING3, USER_SETTING4, USER_SETTING5
         };
-        ImComboBoxItems<v2::t1::EqPresetId>("Preset", kSelections, gDevice.mEqPresetId.desired);
+        ImComboBoxItems<v2::t1::EqPresetId>(i18n::tr("sound.preset"), kSelections, gDevice.mEqPresetId.desired);
         ImEqualizer(gDevice.mEqConfig.desired);
         if (gDevice.mEqConfig.desired.size() == 5)
         {
-            ImGui::SeparatorText("Clear Bass");
+            ImGui::SeparatorText(i18n::tr("sound.clear_bass"));
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::SliderInt("##", &gDevice.mEqClearBass.desired, -10, 10);
         }
-        ImGui::SeparatorText("DSEE");
+        ImGui::SeparatorText(i18n::tr("sound.dsee"));
         ImGui::BeginDisabled(!gDevice.mUpscalingAvailable);
-        if (ImGui::RadioButton("Off", gDevice.mUpscalingEnabled.desired == false))
+        if (ImGui::RadioButton(i18n::tr("common.off"), gDevice.mUpscalingEnabled.desired == false))
             gDevice.mUpscalingEnabled.desired = false;
-        if (ImGui::RadioButton("On (Auto)", gDevice.mUpscalingEnabled.desired == true))
+        if (ImGui::RadioButton(i18n::tr("sound.dsee_on_auto"), gDevice.mUpscalingEnabled.desired == true))
             gDevice.mUpscalingEnabled.desired = true;
         ImGui::EndDisabled();
         ImGui::TreePop();
@@ -1018,7 +966,7 @@ void DrawDeviceControlsDevices()
         || kSupports(F2::PAIRING_DEVICE_MANAGEMENT_WITH_BLUETOOTH_CLASS_OF_DEVICE_CLASSIC_BT)
         || kSupports(F2::PAIRING_DEVICE_MANAGEMENT_WITH_BLUETOOTH_CLASS_OF_DEVICE_CLASSIC_LE);
     if (!supportDeviceMgmt)
-        ImGui::Text("Please enable \"Connect to 2 devices simultaneously\" in System settings to manage devices.");
+        ImGui::Text("%s", i18n::tr("devices.need_multipoint"));
     ImGui::BeginDisabled(!supportDeviceMgmt);
     auto DrawDeviceElement = [&](const mdr::MDRHeadphones::PeripheralDevice& device, bool selected) -> bool
     {
@@ -1031,17 +979,17 @@ void DrawDeviceControlsDevices()
             ImGui::Separator();
             if (device.connected)
             {
-                if (ImModalButton(PSI_UNLINK " Disconnect", 0, 2))
+                if (ImModalButton(i18n::trIcon(PSI_UNLINK, "devices.disconnect").c_str(), 0, 2))
                     gDevice.mPairedDeviceDisconnectMac.desired = device.macAddress;
                 if (res)
                     gDevice.mMultipointDeviceMac.desired = device.macAddress;
             }
             else
             {
-                if (ImModalButton(PSI_LINK " Connect", 0, 2))
+                if (ImModalButton(i18n::trIcon(PSI_LINK, "devices.connect").c_str(), 0, 2))
                     gDevice.mPairedDeviceConnectMac.desired = device.macAddress;
             }
-            if (ImModalButton(PSI_BLUETOOTH_ALT " Unpair", 1, 2))
+            if (ImModalButton(i18n::trIcon(PSI_BLUETOOTH_ALT, "devices.unpair").c_str(), 1, 2))
                 gDevice.mPairedDeviceUnpairMac.desired = device.macAddress;
         }
         ImGui::EndGroup();
@@ -1051,14 +999,14 @@ void DrawDeviceControlsDevices()
     auto connectedDevices = devices | std::views::filter([](auto const& x) { return x.connected; });
     auto unconncetedDevices = devices | std::views::filter([](auto const& x) { return !x.connected; });
     static String connectSelectedMac;
-    if (ImGui::TreeNodeEx("Connected", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx(i18n::tr("devices.connected"), ImGuiTreeNodeFlags_DefaultOpen))
     {
         for (auto& device : connectedDevices)
             if (DrawDeviceElement(device, connectSelectedMac == device.macAddress))
                 connectSelectedMac = connectSelectedMac == device.macAddress ? "" : device.macAddress;
         ImGui::TreePop();
     }
-    if (ImGui::TreeNodeEx("Paired", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx(i18n::tr("devices.paired"), ImGuiTreeNodeFlags_DefaultOpen))
     {
         for (auto& device : unconncetedDevices)
             if (DrawDeviceElement(device, connectSelectedMac == device.macAddress))
@@ -1067,17 +1015,16 @@ void DrawDeviceControlsDevices()
     }
     if (gDevice.mPairingMode.desired)
     {
-        ImTextCentered("Pairing...");
+        ImTextCentered(i18n::tr("devices.pairing"));
         ImSpinner(1000.0f, 16.0f, MaterialYouTheme::ArgbToImU32(MaterialYouTheme::ThemeForModelColor(static_cast<uint8_t>(gDevice.mModelColor)).primary), 2.0f, true, false, 1.0f, ImEaseInOutCubic);
-        if (ImModalButton("Stop"))
+        if (ImModalButton(i18n::tr("devices.stop")))
             gDevice.mPairingMode.desired = false;
     }
     else
     {
-        if (ImModalButton(PSI_BLUETOOTH " Enter Pairing Mode"))
+        if (ImModalButton(i18n::trIcon(PSI_BLUETOOTH, "devices.enter_pairing_mode").c_str()))
             gDevice.mPairingMode.desired = true;
-        ImGui::TextWrapped(
-            PSI_INFO_SIGN_ALT " For TWS (Earbuds) devices, you may need to take both of your headphones out from your case to enter Pairing Mode.");
+        ImGui::TextWrapped("%s", i18n::trIcon(PSI_INFO_SIGN_ALT, "devices.tws_hint").c_str());
     }
     ImGui::EndDisabled();
 }
@@ -1086,6 +1033,35 @@ void DrawDeviceControlsSystem()
 {
     using F1 = v2::MessageMdrV2FunctionType_Table1;
     constexpr auto kSupports = [](auto x) { return gDevice.mSupport.contains(x); };
+    /* Language */
+    {
+        if (ImGui::TreeNodeEx(i18n::tr("system.language"), ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            static const std::pair<i18n::Locale, const char*> kLanguages[] = {
+                { i18n::Locale::English,  "English" },
+                { i18n::Locale::Japanese, "日本語" },
+            };
+            auto current = i18n::GetLocale();
+            const char* currentLabel = "?";
+            for (auto const& [loc, lbl] : kLanguages)
+                if (loc == current) currentLabel = lbl;
+            if (ImGui::BeginCombo(i18n::tr("system.language"), currentLabel))
+            {
+                for (auto const& [loc, lbl] : kLanguages)
+                {
+                    bool sel = loc == current;
+                    if (ImGui::Selectable(lbl, sel))
+                    {
+                        i18n::SetLocale(loc);
+                        i18n::SaveSettings();
+                    }
+                    if (sel) ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::TreePop();
+        }
+    }
     /* General Settings */
     {
         // vvv Lexicographically sort these vvv
@@ -1097,26 +1073,22 @@ void DrawDeviceControlsSystem()
                 return strcmp(lhs.first, rhs) < 0;
             });
             if (it == strings.end() || strcmp(it->first, key) != 0)
-                return "<Unknown>";
+                return "common.unknown_brackets";
             return it->second;
         };
         // ^^^
         auto DrawGSBoolElement = [&](mdr::MDRHeadphones::GsCapability const& caps, MDRProperty<bool>& prop)
         {
-            constexpr StringPair kGSSubjectStrings[] = {{"MULTIPOINT_SETTING", "Connect to 2 devices simultaneously"},
-                                                        {"SIDETONE_SETTING", "Capture Voice During a Phone Call"},
-                                                        {"TOUCH_PANEL_SETTING", "Touch sensor control panel"}};
+            // Maps device-reported subject/summary tags to i18n keys; resolved at display time.
+            constexpr StringPair kGSSubjectStrings[] = {
+                {"MULTIPOINT_SETTING",   "system.gs.multipoint"},
+                {"SIDETONE_SETTING",     "system.gs.sidetone"},
+                {"TOUCH_PANEL_SETTING",  "system.gs.touch_panel"},
+            };
             constexpr StringPair kGSSummaryStrings[] = {
-                {"MULTIPOINT_SETTING_SUMMARY",
-                 "For example, when using the audio device with both a PC and a smartphone, you can use it comfortably "
-                 "without needing to switch connections. During simultaneous connections, playback with the LDAC codec "
-                 "is not possible even if Prioritize Sound Quality is selected."},
-                {"MULTIPOINT_SETTING_SUMMARY_LDAC_AVAILABLE",
-                 "For example, when using the audio device with both a PC and a smartphone, you can use it comfortably "
-                 "without needing to switch connections."},
-                {"SIDETONE_SETTING_SUMMARY",
-                 "Your own voice will be easier to hear during calls. If your voice sounds too loud or background "
-                 "noise is distracting, please turn off this feature."},
+                {"MULTIPOINT_SETTING_SUMMARY",                "system.gs.multipoint_summary"},
+                {"MULTIPOINT_SETTING_SUMMARY_LDAC_AVAILABLE", "system.gs.multipoint_summary_ldac"},
+                {"SIDETONE_SETTING_SUMMARY",                  "system.gs.sidetone_summary"},
             };
 
             using namespace v2::t1;
@@ -1124,8 +1096,8 @@ void DrawDeviceControlsSystem()
                 return;
             bool noSubject = caps.value.subject.value.empty();
             bool noSummary = caps.value.summary.value.empty();
-            auto subject = kFormatGSString(caps.value.subject.value.c_str(), kGSSubjectStrings);
-            auto summary = kFormatGSString(caps.value.summary.value.c_str(), kGSSummaryStrings);
+            auto subject = i18n::tr(kFormatGSString(caps.value.subject.value.c_str(), kGSSubjectStrings));
+            auto summary = i18n::tr(kFormatGSString(caps.value.summary.value.c_str(), kGSSummaryStrings));
             ImGui::BeginDisabled(noSubject);
             ImGui::Checkbox(subject, &prop.desired);
             if (!noSummary)
@@ -1136,7 +1108,7 @@ void DrawDeviceControlsSystem()
             }
             ImGui::EndDisabled();
         };
-        if (ImGui::TreeNodeEx("General Setting", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::TreeNodeEx(i18n::tr("system.general_setting"), ImGuiTreeNodeFlags_DefaultOpen))
         {
             if (kSupports(F1::GENERAL_SETTING_1))
                 DrawGSBoolElement(gDevice.mGsCapability1, gDevice.mGsParamBool1);
@@ -1155,10 +1127,10 @@ void DrawDeviceControlsSystem()
         constexpr v2::t1::Preset kSelections[] = {PLAYBACK_CONTROL, AMBIENT_SOUND_CONTROL_QUICK_ACCESS, NO_FUNCTION};
         if (kSupports(F1::ASSIGNABLE_SETTING))
         {
-            if (ImGui::TreeNodeEx("Touch Preset", ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::TreeNodeEx(i18n::tr("system.touch_preset"), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImComboBoxItems<v2::t1::Preset>("Left Touch", kSelections, gDevice.mTouchFunctionLeft.desired);
-                ImComboBoxItems<v2::t1::Preset>("Right Touch", kSelections, gDevice.mTouchFunctionRight.desired);
+                ImComboBoxItems<v2::t1::Preset>(i18n::tr("system.left_touch"), kSelections, gDevice.mTouchFunctionLeft.desired);
+                ImComboBoxItems<v2::t1::Preset>(i18n::tr("system.right_touch"), kSelections, gDevice.mTouchFunctionRight.desired);
                 ImGui::TreePop();
             }
         }
@@ -1169,9 +1141,9 @@ void DrawDeviceControlsSystem()
         constexpr v2::t1::Function kSelections[] = { NO_FUNCTION, NC_ASM_OFF, NC_ASM,NC_OFF,ASM_OFF };
         if (kSupports(F1::AMBIENT_SOUND_CONTROL_MODE_SELECT))
         {
-            if (ImGui::TreeNodeEx("NC/AMB Button Function",ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::TreeNodeEx(i18n::tr("system.nc_amb_button"),ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImComboBoxItems<v2::t1::Function>("Function", kSelections, gDevice.mNcAsmButtonFunction.desired);
+                ImComboBoxItems<v2::t1::Function>(i18n::tr("system.function"), kSelections, gDevice.mNcAsmButtonFunction.desired);
                 ImGui::TreePop();
             }
         }
@@ -1180,9 +1152,9 @@ void DrawDeviceControlsSystem()
     {
         if (kSupports(F1::HEAD_GESTURE_ON_OFF_TRAINING))
         {
-            if (ImGui::TreeNodeEx("Head Gesture",ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::TreeNodeEx(i18n::tr("system.head_gesture"),ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Checkbox("Enabled", &gDevice.mHeadGestureEnabled.desired);
+                ImGui::Checkbox(i18n::tr("common.enabled"), &gDevice.mHeadGestureEnabled.desired);
                 ImGui::TreePop();
             }
         }
@@ -1196,9 +1168,9 @@ void DrawDeviceControlsSystem()
         bool supportAutoOff = kSupports(F1::AUTO_POWER_OFF), supportAutoOffWear =kSupports(F1::AUTO_POWER_OFF_WITH_WEARING_DETECTION);
         if (supportAutoOff || supportAutoOffWear)
         {
-            if (ImGui::TreeNodeEx("Auto Power Off",ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::TreeNodeEx(i18n::tr("system.auto_power_off"),ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImComboBoxItems<v2::t1::AutoPowerOffElements>("Time", kSelections, gDevice.mPowerAutoOff.desired);
+                ImComboBoxItems<v2::t1::AutoPowerOffElements>(i18n::tr("system.time"), kSelections, gDevice.mPowerAutoOff.desired);
                 ImGui::TreePop();
             }
         }
@@ -1207,19 +1179,19 @@ void DrawDeviceControlsSystem()
     {
         if (kSupports(F1::PLAYBACK_CONTROL_BY_WEARING_REMOVING_HEADPHONE_ON_OFF))
         {
-            if (ImGui::TreeNodeEx("Pause when removed", ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::TreeNodeEx(i18n::tr("system.pause_when_removed"), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Checkbox("Enabled", &gDevice.mAutoPauseEnabled.desired);
+                ImGui::Checkbox(i18n::tr("common.enabled"), &gDevice.mAutoPauseEnabled.desired);
                 ImGui::TreePop();
             }
         }
     }
     /* Voice Guidance */
     {
-        if (ImGui::TreeNodeEx("Voice Guidance", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::TreeNodeEx(i18n::tr("system.voice_guidance"), ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::Checkbox("Enabled", &gDevice.mVoiceGuidanceEnabled.desired);
-            ImGui::SeparatorText("Volume");
+            ImGui::Checkbox(i18n::tr("common.enabled"), &gDevice.mVoiceGuidanceEnabled.desired);
+            ImGui::SeparatorText(i18n::tr("playback.volume"));
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             if (kSupports(v2::MessageMdrV2FunctionType_Table2::VOICE_GUIDANCE_SETTING_MTK_TRANSFER_WITHOUT_DISCONNECTION_SUPPORT_LANGUAGE_SWITCH_AND_VOLUME_ADJUSTMENT))
                 ImGui::SliderInt("##Volume", &gDevice.mVoiceGuidanceVolume.desired, -2, 2);
@@ -1229,38 +1201,38 @@ void DrawDeviceControlsSystem()
 }
 void DrawDeviceControlsAbout()
 {
-    if (ImGui::TreeNodeEx("Model", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx(i18n::tr("about.model"), ImGuiTreeNodeFlags_DefaultOpen))
     {
         if (ImGui::BeginTable("##ModelTable", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit))
         {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Model:");
+            ImGui::Text("%s", i18n::tr("about.model_label"));
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%s", gDevice.mModelName.c_str());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("MAC:");
+            ImGui::Text("%s", i18n::tr("about.mac_label"));
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%s", gDevice.mUniqueId.c_str());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Firmware Version:");
+            ImGui::Text("%s", i18n::tr("about.fw_label"));
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%s", gDevice.mFWVersion.c_str());
 
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Series:");
+            ImGui::Text("%s", i18n::tr("about.series_label"));
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%s", format_as(gDevice.mModelSeries));
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Color:");
+            ImGui::Text("%s", i18n::tr("about.color_label"));
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%s", format_as(gDevice.mModelColor));
 
@@ -1268,7 +1240,7 @@ void DrawDeviceControlsAbout()
         }
         ImGui::TreePop();
     }
-    if (ImGui::TreeNodeEx("Support Functions 1", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx(i18n::tr("about.support_fn1"), ImGuiTreeNodeFlags_DefaultOpen))
     {
         if (ImGui::BeginTable("##SF1", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit))
         {
@@ -1286,7 +1258,7 @@ void DrawDeviceControlsAbout()
         }
         ImGui::TreePop();
     }
-    if (ImGui::TreeNodeEx("Support Functions 2", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx(i18n::tr("about.support_fn2"), ImGuiTreeNodeFlags_DefaultOpen))
     {
         if (ImGui::BeginTable("##SF2", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit))
         {
@@ -1309,27 +1281,27 @@ void DrawDeviceControlsTabs()
 {    
     if (ImGui::BeginTabBar("##Controls"))
     {
-        if (ImGui::BeginTabItem("Playback"))
-        {            
+        if (ImGui::BeginTabItem(i18n::tr("tab.playback")))
+        {
             DrawDeviceControlsPlayback();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Sound"))
+        if (ImGui::BeginTabItem(i18n::tr("tab.sound")))
         {
             DrawDeviceControlsSound();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Devices"))
+        if (ImGui::BeginTabItem(i18n::tr("tab.devices")))
         {
             DrawDeviceControlsDevices();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("System"))
+        if (ImGui::BeginTabItem(i18n::tr("tab.system")))
         {
             DrawDeviceControlsSystem();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("About"))
+        if (ImGui::BeginTabItem(i18n::tr("tab.about")))
         {
             DrawDeviceControlsAbout();
             ImGui::EndTabItem();
@@ -1388,16 +1360,16 @@ void DrawDeviceDisconnect()
     if (ImGui::BeginPopupModal("Disconnected", nullptr, kImWindowFlagsTopMost))
     {
         ImGui::NewLine();
-        ImTextCentered("Device Disconnected");
+        ImTextCentered(i18n::tr("disconnect.title"));
         ImGui::NewLine();
         ImSpinner(5000.0f, 24.0f, MaterialYouTheme::ArgbToImU32(MaterialYouTheme::FixedSurfaceColors::error), 4.0f, true, false);
         ImGui::NewLine();
-        ImGui::SeparatorText("Messages");
-        ImGui::TextWrapped("Connection: %s", mdrConnectionGetLastError(conn));
-        ImGui::TextWrapped("Headphones: %s", gDevice.GetLastError());
+        ImGui::SeparatorText(i18n::tr("disconnect.messages"));
+        ImGui::TextWrapped(i18n::tr("disconnect.connection_fmt"), mdrConnectionGetLastError(conn));
+        ImGui::TextWrapped(i18n::tr("disconnect.headphones_fmt"), gDevice.GetLastError());
         ImGui::NewLine();
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        if (ImModalButton(PSI_LINK " Reconnect"))
+        if (ImModalButton(i18n::trIcon(PSI_LINK, "disconnect.reconnect").c_str()))
         {
             mdrConnectionDisconnect(conn);
             connState = CONN_STATE_NO_CONNECTION;
@@ -1472,16 +1444,16 @@ void DrawBugcheck()
         draw->AddRectFilled(tl + tl, br - tl, MaterialYouTheme::ArgbToImU32(MaterialYouTheme::FixedSurfaceColors::surface));
         ImGui::SetCursorPosY(offset.y + padding * 4);
         ImGui::PushStyleColor(ImGuiCol_Text, errorCol);
-        ImTextCentered("Guru Meditation. Please screenshot and report.");
+        ImTextCentered(i18n::tr("bugcheck.title"));
         ImTextCentered(fmt::format("{}@{}, {} on {}", MDR_GIT_BRANCH_NAME, MDR_GIT_COMMIT_HASH, CLIENT_VERSION, MDR_PLATFORM_OS).c_str());
         ImTextCentered(gBugcheckMessage.c_str());
         ImGui::PopStyleColor();
         ImGui::SetCursorPosY(br.y + padding * 2);
-        ImGui::SeparatorText("To Report");
-        ImGui::TextWrapped( PSI_INFO_SIGN_ALT " Check the Open/Closed Github Issue tickets and see if it's a duplicate.");
-        ImGui::TextWrapped(PSI_INFO_SIGN_ALT " If not, take a screenshot of this screen and submit a new one");
+        ImGui::SeparatorText(i18n::tr("bugcheck.to_report"));
+        ImGui::TextWrapped("%s", i18n::trIcon(PSI_INFO_SIGN_ALT, "bugcheck.hint_check").c_str());
+        ImGui::TextWrapped("%s", i18n::trIcon(PSI_INFO_SIGN_ALT, "bugcheck.hint_submit").c_str());
         ImGui::Separator();
-        ImGui::TextWrapped(PSI_GITHUB " Issues: https://github.com/mos9527/SonyHeadphonesClient/issues");
+        ImGui::TextWrapped("%s", i18n::trIcon(PSI_GITHUB, "bugcheck.issues_link").c_str());
         ImGui::PopFont();
         ImGui::PopStyleVar();
         ImGui::PopStyleColor();

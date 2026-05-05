@@ -24,6 +24,7 @@ target_sources(
         SDLMain.cpp
         Client.cpp
         Fonts/PlexSansIcon.c
+        i18n/Localization.cpp
 )
 set(SDL_AUDIO OFF CACHE BOOL "" FORCE)
 set(SDL_HAPTIC OFF CACHE BOOL "" FORCE)
