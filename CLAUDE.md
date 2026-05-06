@@ -6,7 +6,7 @@ mos9527/SonyHeadphonesClient (`rewrite` ブランチ) を土台にした個人�
 **スコープ**：
 - Phase 1: 日本語化 (i18n) — **完了**
 - Phase 2: Windows ポータブル配布 — **完了 (v0.1.0)**
-- Phase 3: BLE / LE Audio 対応 + MSVC toolchain 移行 — **ビルド系完了 (2026-05-06)、実機検証保留**
+- Phase 3: BLE GATT バックエンド有効化 + MSVC toolchain 移行 — **ビルド系完了 (2026-05-06)、実機検証保留**
 - UI/UX 改修系 (Sound Connect 風ダッシュボード、EQ ビジュアライザ、NC 視覚化、カード化等) は引き続き却下、自発提案しないこと
 - 上流 PR は予定なし
 
@@ -195,9 +195,11 @@ ImGui の `merge_config` で PlexSansIcon の上に重ね、欠落グリフ（�
 
 合計 **約200文字列** が日英スイッチ可能。動作確認：実機 WH/WF-1000XM6 で全タブ表示OK。
 
-## Phase 3 完了状態（2026-05-06）— BLE / LE Audio 対応 + MSVC 移行
+## Phase 3 完了状態（2026-05-06）— BLE GATT バックエンド + MSVC 移行
 
-**動機**：LE Audio 接続と Classic では拾えない GATT 機能を有効化するため、`libmdr/src/Platform/Windows/PlatformWindowsBLE.cpp` (上流の C++/WinRT 実装、747 行) を有効ビルドする必要があった。MinGW では C++/WinRT projection ヘッダが入手できないため、toolchain ごと MSVC へ移行。
+**動機**：Classic Bluetooth (RFCOMM) では届かない GATT サービス読み書き — 具体的には `Windows.Devices.Bluetooth.GenericAttributeProfile` 経由で XM6 が露出する追加プロファイル — を扱えるよう、`libmdr/src/Platform/Windows/PlatformWindowsBLE.cpp` (上流の C++/WinRT 実装、747 行) を有効ビルドする必要があった。MinGW では C++/WinRT projection ヘッダが入手できないため、toolchain ごと MSVC へ移行。
+
+**注意 — 用語**：本実装は **BLE 4.0+ の GATT 制御チャネル** であって、**LE Audio (LC3 codec / Auracast / CIS / BIS) ではない**。LE Audio は `Windows.Media.Audio` 系 API + BT 5.2 ハードウェア + Win11 22H2+ ドライバが必要な別案件で、本フォークの scope 外。v0.2.0 直後の docs で「LE Audio 対応」と書いた箇所は誤記、v0.2.1 で訂正。
 
 **制約**：C ドライブは一切消費不可。MSVC 公式インストーラは `%ProgramData%\Microsoft\VisualStudio\` 等に GB 単位で書き込むため使用不可。
 → [PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools) v2.10.2 で Microsoft 公式ペイロードから MSVC v143 + Windows SDK 10.0 を `E:\tools\msvc` (1.4 GB) に展開。サービス登録・レジストリ・C: 書き込みなし。
@@ -207,7 +209,7 @@ ImGui の `merge_config` で PlexSansIcon の上に重ね、欠落グリフ（�
 - [x] **3c** `build-msvc/` で BLE 入りビルド成功 (309/309 ステップ、`PlatformWindowsBLE.cpp` C++/WinRT コンパイル通過、exe 3.55 MB)
 - [x] **3d** `dumpbin /dependents` で `vcruntime` / `msvcp` / `ucrtbase` 不要を確認 (`/MT` 静的リンク確認)
 - [x] **3e** `.github/workflows/release.yml` を `ilammy/msvc-dev-cmd@v1` + `lukka/get-cmake@latest` ベースに置換、`MDR_DISABLE_BLE=ON` 削除、検証ロジックを `objdump` → `dumpbin` に切替
-- [ ] **3f** 実機 WH / WF-1000XM6 で LE Audio + 追加 GATT 検証（保留中）
+- [ ] **3f** 実機 WH / WF-1000XM6 で BLE GATT 接続 + 追加プロファイル動作検証（保留中）
 - [ ] **3g** `v0.2.0` タグ push（実機検証通過後）
 
 **MinGW 環境 (`E:\tools\mingw64`) は保守用に保持**。`MDR_DISABLE_BLE=ON` flag + `if (MINGW)` 分岐 (`-static`) も全て残しているので、いつでも fallback 可能。

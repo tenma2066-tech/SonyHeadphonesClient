@@ -26,7 +26,7 @@ locale=ja
 ### 動作要件
 
 - Windows 10 (1903+) / 11 — UCRT 標準搭載が前提
-- Bluetooth Classic 接続のヘッドホン (LE Audio は v0.2.0 以降で対応予定)
+- Bluetooth Classic 接続のヘッドホン (v0.2.0 以降は BLE GATT 経由の制御チャネルも併用)
 - 対応機種は upstream の [`docs/device-support`](docs/device-support) を参照
 
 ---
@@ -53,7 +53,8 @@ upstream `rewrite` ブランチの全機能をそのまま継承：
 
 ## 制限
 
-- **LE Audio 接続**：v0.1.x までは MinGW 環境で C++/WinRT が使えず BLE バックエンドを除外しており Classic 専用でした。v0.2.0 から MSVC + Win SDK 構成に切替えて Windows BLE バックエンド (`PlatformWindowsBLE.cpp`) を有効化しています。XM6 が LE Audio 接続でも動作する想定ですが、新構成での実機検証が完了するまでは安定動作を保証しません。問題があればペアリング設定で Classic に戻してください。
+- **BLE GATT バックエンド**：v0.1.x までは MinGW 環境で C++/WinRT が使えず Windows BLE バックエンド (`PlatformWindowsBLE.cpp`) を除外しており Classic Bluetooth (RFCOMM) 専用でした。v0.2.0 から MSVC + Win SDK 構成に切替えて BLE GATT 制御チャネルを併用できるようにしています。新構成での実機検証は完了していないため安定動作は無保証、不具合時はペアリング設定で Classic 接続に戻してください。
+- **LE Audio (LC3) 非対応**：本フォークは LE Audio の音声ストリーミング (LC3 codec / Auracast / CIS / BIS) を扱いません。BLE バックエンドは GATT 制御専用で、LC3 streaming は別 API (`Windows.Media.Audio`) + BT 5.2 ハードウェア + Win11 22H2+ ドライバ要件のため scope 外です。
 - **upstream PR 予定なし**：個人運用のため、本フォークから upstream への取り込み計画はありません。
 
 ---
