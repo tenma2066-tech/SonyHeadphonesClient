@@ -1,13 +1,18 @@
 # SonyHeadphonesClient (mos9527 fork) — 個人開発フォーク
 
-mos9527/SonyHeadphonesClient (`rewrite` ブランチ) を土台に、日本語化と UI/UX 改修を進める個人プロジェクト。
+mos9527/SonyHeadphonesClient (`rewrite` ブランチ) を土台にした個人プロジェクト。**スコープは日本語化 (i18n) と Windows ポータブル配布の 2 点のみ** — UI/UX 改修 (Phase 2 系) は明示的に却下済、自発提案しないこと。
 ベースはMITライセンス。実機ターゲットは **WH-1000XM6 / WF-1000XM6**。
 
 ## リポジトリ位置
 
-`E:\dev\SonyHeadphonesClient\`
+ローカル：`E:\dev\SonyHeadphonesClient\`、ブランチ `rewrite`。
 
-ブランチ：`rewrite` (origin = mos9527/SonyHeadphonesClient)。改造はローカルのみ、未コミット状態で進行中。
+| remote | URL | 用途 |
+|---|---|---|
+| `origin` | `https://github.com/tenma2066-tech/SonyHeadphonesClient` | 自分のフォーク。push 先 |
+| `upstream` | `https://github.com/mos9527/SonyHeadphonesClient` | 上流。fetch のみ |
+
+`gh` CLI は `tenma2066-tech` で認証済（`repo` + `workflow` scope）。`gh` 系コマンドはデフォルトで上流を見るため `--repo tenma2066-tech/SonyHeadphonesClient` を明示すること。
 
 ## ビルド
 
@@ -50,6 +55,27 @@ cmake --build . --target SonyHeadphonesClient -j2
 # 実行（DLL同梱不要）
 ./build/client/SonyHeadphonesClient.exe
 ```
+
+## 配布（GitHub Release 自動化）
+
+`.github/workflows/release.yml` がタグ `v*` の push と `workflow_dispatch` で起動：
+
+1. windows-latest + MSYS2 UCRT64 セットアップ（ローカルと同等の MinGW）
+2. `cmake -DMDR_DISABLE_BLE=ON` で configure → `--target SonyHeadphonesClient -j2`
+3. `objdump -p` で MinGW DLL 依存（libgcc / libstdc++ / libwinpthread）が exe に残ってないか検証 — 残っていたら fail
+4. `dist/` に exe + `settings.ini.sample` + `README.md` をまとめて zip 化
+5. tag push の場合：`softprops/action-gh-release@v2` で GitHub Release 作成、zip 添付
+6. workflow_dispatch の場合：artifact としてアップロード（リリース作らず確認用）
+
+リリース手順：
+```bash
+git tag -a v0.x.y -m "..."
+git push origin v0.x.y
+```
+
+**workflow に `permissions: contents: write` 必須**（無いと release 作成が "Resource not accessible by integration" で失敗する。v0.1.0 で踏んで commit `af0658e` で修正済）。
+
+リリース zip 命名：`SonyHeadphonesClient-vX.Y.Z-win-x64-portable.zip`
 
 ## i18n アーキテクチャ（Phase 1で導入）
 
@@ -126,6 +152,7 @@ ImGui の `merge_config` で PlexSansIcon の上に重ね、欠落グリフ（�
 
 ## 注意
 
-- 改造は `rewrite` ブランチで進行中。upstream PR は未予定（個人用）
-- 公開検討する場合は商標（"Sony", "WH-1000XM..." 等）配慮要、`PlatformWindowsBLE.cpp` の本実装が残課題
-- Sonyのファーム更新でプロトコル変動の可能性あり（非公式リバース）
+- upstream PR は予定なし（個人運用フォーク）
+- README に商標 disclaimer・上流帰属あり。公開済 (`tenma2066-tech/SonyHeadphonesClient`) なので新規 commit は商標表記の整合性に注意
+- LE Audio 接続は MinGW で C++/WinRT が使えないため非対応。`PlatformWindowsBLE.cpp` の本実装は将来検討
+- Sony のファーム更新でプロトコル変動の可能性あり（非公式リバース）
