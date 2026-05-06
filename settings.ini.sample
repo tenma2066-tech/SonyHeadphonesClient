@@ -1,0 +1,5 @@
+# Place this file next to SonyHeadphonesClient.exe and rename to settings.ini
+# to override the default startup locale.
+#
+# Supported values: en (English) / ja (Japanese)
+locale=ja
