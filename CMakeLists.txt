@@ -24,6 +24,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # https://developercommunity.visualstudio.com/t/__VA_OPT__-should-be-enabled-by-std:c/10565399
     add_compile_options("/Zc:preprocessor")
     add_compile_options("/utf-8")
+    # Static-link the MSVC runtime so the exe runs without vcredist
+    # (vcruntime140.dll / msvcp140.dll). Mirrors the MinGW -static path.
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 else()
     add_compile_options("-Wall" "-Wno-unused-function" "-Wno-unused-variable")
 endif()

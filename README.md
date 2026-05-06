@@ -26,7 +26,7 @@ locale=ja
 ### 動作要件
 
 - Windows 10 (1903+) / 11 — UCRT 標準搭載が前提
-- Bluetooth Classic 接続のヘッドホン (LE Audio 非対応)
+- Bluetooth Classic 接続のヘッドホン (LE Audio は v0.2.0 以降で対応予定)
 - 対応機種は upstream の [`docs/device-support`](docs/device-support) を参照
 
 ---
@@ -47,13 +47,13 @@ upstream `rewrite` ブランチの全機能をそのまま継承：
 このフォーク独自の追加：
 
 - **日本語 UI** — 約 200 文字列を翻訳。システムタブから即時切替可能
-- **ポータブル化** — MinGW ランタイムを static link し DLL 同梱不要、`settings.ini` も exe 隣に保存
+- **ポータブル化** — MSVC ランタイム (`vcruntime` / `msvcp` / `ucrtbase`) を `/MT` 静的リンクし DLL 同梱不要、`settings.ini` も exe 隣に保存
 
 ---
 
 ## 制限
 
-- **LE Audio 接続非対応**：MinGW 環境で C++/WinRT が利用できないため、Windows BLE バックエンド (`PlatformWindowsBLE.cpp`) を除外しています。Classic Bluetooth でのみ動作します。XM6 が LE Audio で接続されている場合はペアリング設定で Classic に戻してください。
+- **LE Audio 接続**：v0.1.x までは MinGW 環境で C++/WinRT が使えず BLE バックエンドを除外しており Classic 専用でした。v0.2.0 から MSVC + Win SDK 構成に切替えて Windows BLE バックエンド (`PlatformWindowsBLE.cpp`) を有効化しています。XM6 が LE Audio 接続でも動作する想定ですが、新構成での実機検証が完了するまでは安定動作を保証しません。問題があればペアリング設定で Classic に戻してください。
 - **upstream PR 予定なし**：個人運用のため、本フォークから upstream への取り込み計画はありません。
 
 ---
@@ -62,16 +62,22 @@ upstream `rewrite` ブランチの全機能をそのまま継承：
 
 詳細は [`CLAUDE.md`](CLAUDE.md) を参照（必要ツールのバージョンや環境変数、典型的なハマりどころを記載）。要点のみ：
 
+**MSVC + Windows SDK（v0.2.0 以降の標準、BLE 有効）**：
 ```bash
-export PATH="/<MinGW>/bin:/<CMake>/bin:/<Ninja>/bin:$PATH"
-
-cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DMDR_DISABLE_BLE=ON
+# MSVC env を activation した上で cmake/ninja を呼ぶ
+cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target SonyHeadphonesClient -j2
 
 ./build/client/SonyHeadphonesClient.exe
 ```
 
-GitHub Actions のリリースワークフローも同じ手順を実行します（`.github/workflows/release.yml`）。タグを `v*` 形式で push するとリリースが自動生成されます。
+**MinGW（fallback、BLE 除外）**：
+```bash
+cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DMDR_DISABLE_BLE=ON
+cmake --build build --target SonyHeadphonesClient -j2
+```
+
+GitHub Actions のリリースワークフローは MSVC 構成 (`ilammy/msvc-dev-cmd@v1` + `lukka/get-cmake@latest`) で同等手順を実行します（`.github/workflows/release.yml`）。タグを `v*` 形式で push するとリリースが自動生成されます。
 
 ---
 

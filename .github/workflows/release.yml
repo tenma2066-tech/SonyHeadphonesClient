@@ -15,41 +15,36 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: msys2 {0}
+        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Setup MSYS2 / MinGW UCRT64
-        uses: msys2/setup-msys2@v2
+      - name: Setup MSVC dev environment (x64)
+        uses: ilammy/msvc-dev-cmd@v1
         with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-ninja
-            mingw-w64-ucrt-x86_64-binutils
-            zip
-            git
+          arch: x64
+
+      - name: Setup CMake + Ninja
+        uses: lukka/get-cmake@latest
 
       - name: Configure CMake
-        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DMDR_DISABLE_BLE=ON
+        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: cmake --build build --target SonyHeadphonesClient -j2
 
-      - name: Verify portable (no MinGW DLL deps)
+      - name: Verify portable (no MSVC runtime DLL deps)
         run: |
-          deps=$(objdump -p build/client/SonyHeadphonesClient.exe | grep -iE 'libgcc|libstdc|libwinpthread' || true)
+          deps=$(dumpbin //dependents build/client/SonyHeadphonesClient.exe | grep -iE 'vcruntime|msvcp|ucrtbase' || true)
           if [ -n "$deps" ]; then
-            echo "Found MinGW runtime DLL deps in exe:"
+            echo "Found MSVC runtime DLL deps in exe:"
             echo "$deps"
             exit 1
           fi
-          echo "exe is portable (no MinGW runtime DLL deps)"
+          echo "exe is portable (no MSVC runtime DLL deps)"
 
       - name: Stage release artifacts
         run: |
@@ -72,7 +67,7 @@ jobs:
       - name: Create zip
         run: |
           cd dist
-          zip -r "../SonyHeadphonesClient-${{ steps.ver.outputs.ver }}-win-x64-portable.zip" .
+          7z a "../SonyHeadphonesClient-${{ steps.ver.outputs.ver }}-win-x64-portable.zip" .
 
       - name: Upload artifact (manual runs only)
         if: github.event_name == 'workflow_dispatch'

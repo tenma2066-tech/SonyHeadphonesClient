@@ -1,7 +1,14 @@
 # SonyHeadphonesClient (mos9527 fork) — 個人開発フォーク
 
-mos9527/SonyHeadphonesClient (`rewrite` ブランチ) を土台にした個人プロジェクト。**スコープは日本語化 (i18n) と Windows ポータブル配布の 2 点のみ** — UI/UX 改修 (Phase 2 系) は明示的に却下済、自発提案しないこと。
+mos9527/SonyHeadphonesClient (`rewrite` ブランチ) を土台にした個人プロジェクト。
 ベースはMITライセンス。実機ターゲットは **WH-1000XM6 / WF-1000XM6**。
+
+**スコープ**：
+- Phase 1: 日本語化 (i18n) — **完了**
+- Phase 2: Windows ポータブル配布 — **完了 (v0.1.0)**
+- Phase 3: BLE / LE Audio 対応 + MSVC toolchain 移行 — **ビルド系完了 (2026-05-06)、実機検証保留**
+- UI/UX 改修系 (Sound Connect 風ダッシュボード、EQ ビジュアライザ、NC 視覚化、カード化等) は引き続き却下、自発提案しないこと
+- 上流 PR は予定なし
 
 ## リポジトリ位置
 
@@ -18,54 +25,92 @@ mos9527/SonyHeadphonesClient (`rewrite` ブランチ) を土台にした個人�
 
 ### 必要ツール（すべて E:\tools にポータブル配置済み）
 
-- MinGW-w64 GCC 16.1.0 UCRT (winlibs) → `E:\tools\mingw64\bin`
+**MSVC 主系（Phase 3 以降の標準）**：
+- MSVC v143 (cl 19.44.35226 / VC Tools 14.44.35207) + Windows SDK 10.0.26100 → `E:\tools\msvc`
+  - [PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools) (v2.10.2) で展開 (1.4 GB、サービス登録/レジストリ/C: 書き込みなし)
+  - 環境設定スクリプト：`E:\tools\msvc\devcmd.bat` / `devcmd.ps1`
 - CMake 4.3.2 → `E:\tools\cmake\bin`
 - Ninja 1.13.2 → `E:\tools\bin\ninja.exe`
 
-### PATH（bash）
+**MinGW 副系（fallback、`MDR_DISABLE_BLE=ON` 専用）**：
+- MinGW-w64 GCC 16.1.0 UCRT (winlibs) → `E:\tools\mingw64\bin`
+- C++/WinRT 不可 → BLE バックエンド除外時のみ使用
 
+### PATH と env activation（bash）
+
+**MSVC 主系**：
+```bash
+# devcmd.bat は INCLUDE/LIB/PATH をまとめてセット。bash から呼ぶには cmd を経由
+cmd /c 'call E:\tools\msvc\devcmd.bat && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..'
+# cmake と ninja は別途 PATH へ通す
+export PATH="/e/tools/cmake/bin:/e/tools/bin:$PATH"
+```
+
+**MinGW 副系**：
 ```bash
 export PATH="/e/tools/mingw64/bin:/e/tools/cmake/bin:/e/tools/bin:$PATH"
 ```
 
 ### 既知のハマりどころ
 
-1. **C++/WinRTヘッダ不足**：MinGW環境では `winrt/Windows.Foundation.h` が無く `PlatformWindowsBLE.cpp` がコンパイル不可。
-   → CMake オプション `-DMDR_DISABLE_BLE=ON` でBLEバックエンド除外（スタブ `PlatformWindowsBLE_stub.cpp` に差替）。
-   → Classic Bluetooth で WH/WF-1000XM6 動作確認済み。LE Audio接続は不可。
+1. **MSVC ランタイムは `/MT` 静的リンク**：ルート `CMakeLists.txt` で `set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")` をグローバル設定 (CMP0091 NEW)。SDL3 / imgui 含む全 target に伝播。`vcruntime140.dll` / `msvcp140.dll` / `ucrtbase.dll` 同梱不要、vcredist 不要。
 
-2. **MinGW ランタイムは static link 済**：`-static` を `client/CMakeLists.txt` で適用。
-   `libgcc_s_seh-1.dll` / `libstdc++-6.dll` / `libwinpthread-1.dll` の同梱は不要。exe 単独で起動可能。
+2. **MinGW fallback も static**：`client/CMakeLists.txt` の `if (MINGW)` 分岐で `-static` を適用。`libgcc_s_seh-1.dll` / `libstdc++-6.dll` / `libwinpthread-1.dll` 同梱不要。
 
-3. **git の dubious ownership**：E ドライブが ownership 非記録のため `safe.directory = *` を `git config --global` 設定済み。
+3. **C++/WinRT は MSVC + Win SDK 必須**：MinGW では `winrt/Windows.Foundation.h` が入手できず `PlatformWindowsBLE.cpp` (747 行) がビルド不可。
+   → MSVC ビルドでは `windowsapp.lib` リンクで自動有効化 (`libmdr/src/Platform/Windows/CMakeLists.txt`)。
+   → MinGW で逃げる場合は `-DMDR_DISABLE_BLE=ON` でスタブ `PlatformWindowsBLE_stub.cpp` に差し替え。
+
+4. **PortableBuildTools の文字化け事故**：`E:\tools\dl\PortableBuildTools.exe` は CLI 引数を受け付けるが、内部で **`SetConsoleOutputCP(437)`** を call し **`WriteConsole` (Wide API) で出力** する。
+   - bash から直接呼ぶと CP437 (米国 OEM) が UTF-8 デコーダに食われ、ロシア語/罫線文字風の文字化けでターミナル状態機械が壊れる。
+   - `WriteConsole` はリダイレクト先 (パイプ/ファイル) では失敗して何も書かない → ログ取れない。
+   - **回避策**：PowerShell の `Start-Process` で **新しい console 窓を開いて起動** (CP437 汚染をその窓に閉じ込める)。または `-NoNewWindow` で CLI モード強制 + 親 console の文字化けを覚悟。
+   - 起動判定ロジック：`base.h:917` で `GetWindowThreadProcessId(GetConsoleWindow(), &pid); invoked_from_console = (GetCurrentProcessId() != pid);`。`Start-Process` (新窓) だと自分が console 所有者になり GUI モード判定。
+
+5. **git の dubious ownership**：E ドライブが ownership 非記録のため `safe.directory = *` を `git config --global` 設定済み。
 
 ### コマンド例
 
+**MSVC 主系（BLE 有効、推奨）**：
+```bash
+export PATH="/e/tools/cmake/bin:/e/tools/bin:$PATH"
+cd /e/dev/SonyHeadphonesClient
+mkdir -p build-msvc
+
+# configure（cl.exe + Win SDK の env activation を cmd 経由で）
+cmd /c 'call E:\tools\msvc\devcmd.bat && cd /d E:\dev\SonyHeadphonesClient\build-msvc && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..'
+
+# ビルド（N200/8GB で 2〜3 分、SDL3+imgui 同梱で 309 ステップ）
+cmd /c 'call E:\tools\msvc\devcmd.bat && cmake --build E:\dev\SonyHeadphonesClient\build-msvc --target SonyHeadphonesClient -j2'
+
+# 実行（DLL 同梱不要）
+./build-msvc/client/SonyHeadphonesClient.exe
+
+# DLL 依存検証（vcruntime/msvcp/ucrt が出ないこと）
+cmd /c 'call E:\tools\msvc\devcmd.bat && dumpbin /dependents E:\dev\SonyHeadphonesClient\build-msvc\client\SonyHeadphonesClient.exe'
+```
+
+**MinGW 副系（BLE 除外、fallback）**：
 ```bash
 export PATH="/e/tools/mingw64/bin:/e/tools/cmake/bin:/e/tools/bin:$PATH"
 cd /e/dev/SonyHeadphonesClient
-
-# 初回（既に build/ にdeps揃ってる場合は skip）
 mkdir -p build && cd build
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DMDR_DISABLE_BLE=ON ..
-
-# ビルド（N200/8GBで5-15分、-j2推奨）
 cmake --build . --target SonyHeadphonesClient -j2
-
-# 実行（DLL同梱不要）
-./build/client/SonyHeadphonesClient.exe
+./client/SonyHeadphonesClient.exe
 ```
 
 ## 配布（GitHub Release 自動化）
 
 `.github/workflows/release.yml` がタグ `v*` の push と `workflow_dispatch` で起動：
 
-1. windows-latest + MSYS2 UCRT64 セットアップ（ローカルと同等の MinGW）
-2. `cmake -DMDR_DISABLE_BLE=ON` で configure → `--target SonyHeadphonesClient -j2`
-3. `objdump -p` で MinGW DLL 依存（libgcc / libstdc++ / libwinpthread）が exe に残ってないか検証 — 残っていたら fail
-4. `dist/` に exe + `settings.ini.sample` + `README.md` をまとめて zip 化
-5. tag push の場合：`softprops/action-gh-release@v2` で GitHub Release 作成、zip 添付
-6. workflow_dispatch の場合：artifact としてアップロード（リリース作らず確認用）
+1. windows-latest + `ilammy/msvc-dev-cmd@v1` で MSVC v143 + Win SDK 環境を activation (windows-latest は VS 2022 + SDK プリインストール済)
+2. `lukka/get-cmake@latest` で CMake + Ninja を確保
+3. `cmake -G Ninja -DCMAKE_BUILD_TYPE=Release` で configure（`MDR_DISABLE_BLE` 指定なし = BLE 有効）→ `--target SonyHeadphonesClient -j2`
+4. `dumpbin /dependents` で `vcruntime` / `msvcp` / `ucrtbase` が exe に残ってないか検証 — 残っていたら fail
+5. `dist/` に exe + `settings.ini.sample` + `README.md` をまとめて 7-Zip で zip 化
+6. tag push の場合：`softprops/action-gh-release@v2` で GitHub Release 作成、zip 添付
+7. workflow_dispatch の場合：artifact としてアップロード（リリース作らず確認用）
 
 リリース手順：
 ```bash
@@ -150,9 +195,25 @@ ImGui の `merge_config` で PlexSansIcon の上に重ね、欠落グリフ（�
 
 合計 **約200文字列** が日英スイッチ可能。動作確認：実機 WH/WF-1000XM6 で全タブ表示OK。
 
+## Phase 3 完了状態（2026-05-06）— BLE / LE Audio 対応 + MSVC 移行
+
+**動機**：LE Audio 接続と Classic では拾えない GATT 機能を有効化するため、`libmdr/src/Platform/Windows/PlatformWindowsBLE.cpp` (上流の C++/WinRT 実装、747 行) を有効ビルドする必要があった。MinGW では C++/WinRT projection ヘッダが入手できないため、toolchain ごと MSVC へ移行。
+
+**制約**：C ドライブは一切消費不可。MSVC 公式インストーラは `%ProgramData%\Microsoft\VisualStudio\` 等に GB 単位で書き込むため使用不可。
+→ [PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools) v2.10.2 で Microsoft 公式ペイロードから MSVC v143 + Windows SDK 10.0 を `E:\tools\msvc` (1.4 GB) に展開。サービス登録・レジストリ・C: 書き込みなし。
+
+- [x] **3a** PortableBuildTools で `E:\tools\msvc` 展開 (MSVC 14.44.35207 + Win SDK 10.0.26100、`devcmd.bat` 自動生成)
+- [x] **3b** ルート `CMakeLists.txt` に `CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<...>` をグローバル設定 (CMP0091 NEW)
+- [x] **3c** `build-msvc/` で BLE 入りビルド成功 (309/309 ステップ、`PlatformWindowsBLE.cpp` C++/WinRT コンパイル通過、exe 3.55 MB)
+- [x] **3d** `dumpbin /dependents` で `vcruntime` / `msvcp` / `ucrtbase` 不要を確認 (`/MT` 静的リンク確認)
+- [x] **3e** `.github/workflows/release.yml` を `ilammy/msvc-dev-cmd@v1` + `lukka/get-cmake@latest` ベースに置換、`MDR_DISABLE_BLE=ON` 削除、検証ロジックを `objdump` → `dumpbin` に切替
+- [ ] **3f** 実機 WH / WF-1000XM6 で LE Audio + 追加 GATT 検証（保留中）
+- [ ] **3g** `v0.2.0` タグ push（実機検証通過後）
+
+**MinGW 環境 (`E:\tools\mingw64`) は保守用に保持**。`MDR_DISABLE_BLE=ON` flag + `if (MINGW)` 分岐 (`-static`) も全て残しているので、いつでも fallback 可能。
+
 ## 注意
 
 - upstream PR は予定なし（個人運用フォーク）
 - README に商標 disclaimer・上流帰属あり。公開済 (`tenma2066-tech/SonyHeadphonesClient`) なので新規 commit は商標表記の整合性に注意
-- LE Audio 接続は MinGW で C++/WinRT が使えないため非対応。`PlatformWindowsBLE.cpp` の本実装は将来検討
 - Sony のファーム更新でプロトコル変動の可能性あり（非公式リバース）
